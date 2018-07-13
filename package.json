@@ -10,7 +10,7 @@
   "scripts": {
     "test": "istanbul cover ./node_modules/.bin/_mocha",
     "precommit": "npm run lint && npm run test",
-    "lint": "standard-format -w lib/*"
+    "lint": "standard --fix 'lib/**/*.js' 'test/**/*.js'"
   },
   "author": "",
   "license": "ISC",
@@ -18,10 +18,17 @@
     "husky": "^0.14.3",
     "istanbul": "^1.1.0-alpha.1",
     "mocha": "^5.2.0",
-    "standard-format": "^2.2.4"
+    "standard": "^11.0.1"
   },
   "dependencies": {
     "lodash": "^4.17.10",
     "pirates": "^4.0.0"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "describeFunction",
+      "it"
+    ]
   }
 }
