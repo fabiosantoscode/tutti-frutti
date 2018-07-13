@@ -1,0 +1,29 @@
+{
+  "name": "distridev",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "istanbul cover ./node_modules/.bin/_mocha",
+    "precommit": "npm run lint && npm run test",
+    "lint": "standard-format -w lib/*"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^0.14.3",
+    "istanbul": "^1.1.0-alpha.1",
+    "mocha": "^5.2.0",
+    "standard-format": "^2.2.4"
+  },
+  "dependencies": {
+    "deep-equal": "^1.0.1",
+    "lodash": "^4.17.10",
+    "object-diff": "0.0.4",
+    "pirates": "^4.0.0"
+  }
+}
