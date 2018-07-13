@@ -21,9 +21,7 @@
     "standard-format": "^2.2.4"
   },
   "dependencies": {
-    "deep-equal": "^1.0.1",
     "lodash": "^4.17.10",
-    "object-diff": "0.0.4",
     "pirates": "^4.0.0"
   }
 }

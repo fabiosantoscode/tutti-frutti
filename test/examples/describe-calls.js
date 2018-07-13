@@ -1,8 +1,8 @@
 'use strict'
 
-const { Immutable } = require('../../lib')
+const {Stateless} = require('../../lib')
 
-class BasicPieceOfInfrastructure extends Immutable { }
+class BasicPieceOfInfrastructure extends Stateless { }
 
 const basic = describe('basic', BasicPieceOfInfrastructure, {
   code: describeFunction((arg1, arg2) => {
