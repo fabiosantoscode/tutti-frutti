@@ -2,14 +2,14 @@
   "name": "tutti-frutti",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "directories": {
     "lib": "lib",
     "test": "test"
   },
   "scripts": {
     "test": "istanbul cover ./node_modules/.bin/_mocha",
-    "precommit": "npm run lint && npm run test",
+    "precommit": "npm run lint --silent && npm run test --silent",
     "lint": "standard --fix 'lib/**/*.js' 'test/**/*.js'"
   },
   "author": "",
