@@ -15,6 +15,7 @@ describe('probe', () => {
 
     assert.deepEqual(probed, {
       basic: {
+        name: 'basic',
         class: BasicPieceOfInfrastructure,
         config: {
           code: new FunctionDescription(describedFunction, { fileName })
