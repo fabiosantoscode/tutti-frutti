@@ -1,7 +1,8 @@
 {
   "name": "tutti-frutti",
   "version": "1.0.0",
-  "description": "",
+  "description": "Deploy as many services as you want from a single NodeJS codebase",
+  "repository": "https://github.com/fabiosantoscode/tutti-frutti.git",
   "main": "lib/index.js",
   "directories": {
     "lib": "lib",
