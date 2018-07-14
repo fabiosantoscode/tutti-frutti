@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Deploy as many services as you want from a single NodeJS codebase",
   "repository": "https://github.com/fabiosantoscode/tutti-frutti.git",
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "main": "lib/index.js",
   "files": [
     "lib"
