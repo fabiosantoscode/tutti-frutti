@@ -87,6 +87,7 @@ describe('fruit creators: Stateless(...)', () => {
     let called = false
     subject.onDeploy(() => { called = true })
 
+    assert.equal(called, false)
     setImmediate(() => {
       assert.equal(called, true)
       cb()
