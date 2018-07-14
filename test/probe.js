@@ -3,7 +3,7 @@
 const assert = require('assert').strict
 const path = require('path')
 const probe = require('../lib/probe')
-const {FunctionDescription} = probe
+const FunctionDescription = require('../lib/function-description')
 
 describe('probe', () => {
   it('finds and reports describe calls in a file', () => {
@@ -22,5 +22,12 @@ describe('probe', () => {
         }
       }
     })
+  })
+  it('errors when two equal describe calls are found', () => {
+    const fileName = path.join(__dirname, 'examples/error-two-equal-describe-calls.js')
+
+    assert.throws(() => {
+      probe(fileName)
+    }, /two fruits with the same name have been created: "basic"/)
   })
 })
