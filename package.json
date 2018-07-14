@@ -4,13 +4,17 @@
   "description": "Deploy as many services as you want from a single NodeJS codebase",
   "repository": "https://github.com/fabiosantoscode/tutti-frutti.git",
   "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
   "directories": {
     "lib": "lib",
     "test": "test"
   },
   "scripts": {
     "test": "istanbul cover ./node_modules/.bin/_mocha",
-    "precommit": "npm run lint --silent && npm run test --silent",
+    "check-coverage": "istanbul check-coverage --statements 100 --branches 100 ./coverage/**/*.json",
+    "precommit": "npm run lint --silent && npm run test --silent && npm run check-coverage --silent",
     "lint": "standard --fix 'lib/**/*.js' 'test/**/*.js'"
   },
   "author": "",
