@@ -1,7 +1,7 @@
 'use strict'
 
 const assert = require('assert').strict
-const {Stateless, _PostDeployProp: PostDeployProp} = require('../lib/fruit-creators')
+const {Stateless} = require('../lib/fruit-creators')
 
 describe('fruit creators: Stateless(...)', () => {
   const FooProducer = Stateless({
@@ -92,19 +92,5 @@ describe('fruit creators: Stateless(...)', () => {
       assert.equal(called, true)
       cb()
     })
-  })
-})
-
-describe('PostDeployProp', () => {
-  it('resolves to a mapped value', () => {
-    const pdp = new PostDeployProp({ deployed: true, test: '123' }, 'test')
-      .then(value => value + '456')
-
-    assert.equal(pdp.resolve(), '123456')
-  })
-  it('validates then() argument', () => {
-    assert.throws(() => {
-      new PostDeployProp().then('foo')
-    }, /PostDeployProp.then\(\) argument must be a function, got string/)
   })
 })
