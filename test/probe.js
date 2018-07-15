@@ -1,6 +1,7 @@
 'use strict'
 
-const assert = require('assert').strict
+let assert = require('assert')
+assert = assert.strict || assert
 const path = require('path')
 const probe = require('../lib/probe')
 const FunctionDescription = require('../lib/function-description')

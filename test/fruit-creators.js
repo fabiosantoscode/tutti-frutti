@@ -1,6 +1,6 @@
 'use strict'
 
-const assert = require('assert').strict
+const assert = require('assert')
 const {Stateless} = require('../lib/fruit-creators')
 
 describe('fruit creators: Stateless(...)', () => {
@@ -44,9 +44,12 @@ describe('fruit creators: Stateless(...)', () => {
 
     const subject = FruitCreator('subject', {})
 
-    await assert.rejects(async () => {
+    try {
       await subject.deploy()
-    }, /Missing props in return from deploy\(\): \["neverReturned"\]/)
+      assert(false)
+    } catch (e) {
+      assert.equal(e.message, 'Missing props in return from deploy(): ["neverReturned"]')
+    }
   })
   it('adds props to object', () => {
     const subject = Subject('subject', { foo: 'bar' })
@@ -58,10 +61,11 @@ describe('fruit creators: Stateless(...)', () => {
       foo: fooProd.postDeployProp('foo').then(value => 'thenned-' + value)
     })
 
-    // Too soon: fooProd hasn't been deployed
-    await assert.rejects(async () => {
+    // Too soon: fooProd hasn't been deployed, so it throws
+    try {
       await subject.deploy()
-    }, /AssertionError/)
+      assert(false)
+    } catch (e) { }
 
     await fooProd.deploy()
 

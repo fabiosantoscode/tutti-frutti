@@ -1,6 +1,7 @@
 'use strict'
 
-const assert = require('assert').strict
+let assert = require('assert')
+assert = assert.strict || assert
 const PostDeployProp = require('../lib/post-deploy-prop')
 
 describe('PostDeployProp', () => {
