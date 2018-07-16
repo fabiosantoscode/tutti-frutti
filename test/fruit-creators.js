@@ -6,6 +6,11 @@ const {Stateless} = require('../lib/fruit-creators')
 describe('fruit creators: Stateless(...)', () => {
   const FooProducer = Stateless({
     postDeployProps: ['foo'],
+    getCurrentProps () {
+      return {
+        foo: 'current-foo'
+      }
+    },
     async deploy () {
       return {
         foo: 'test-foo'
@@ -17,7 +22,8 @@ describe('fruit creators: Stateless(...)', () => {
     postDeployProps: ['bar'],
     getCurrentProps () {
       return {
-        foo: 'current-foo'
+        foo: 'current-foo',
+        bar: 'current-bar'
       }
     },
     async deploy () {
@@ -50,6 +56,7 @@ describe('fruit creators: Stateless(...)', () => {
   it('validates return from deploy()', async () => {
     const FruitCreator = Stateless({
       postDeployProps: ['neverReturned'],
+      getCurrentProps: () => null,
       deploy () {
         return {}
       }
@@ -85,7 +92,13 @@ describe('fruit creators: Stateless(...)', () => {
 
     assert.deepEqual(
       await correctSubject.getCurrentProps(),
-      { foo: 'current-foo' }
+      { foo: 'current-foo', bar: 'current-bar' }
+    )
+  })
+  it('understands that null means it\'s not deployed', async () => {
+    const NotDeployed = Stateless({ props: ['foo'], getCurrentProps () { return null } })
+    assert(
+      await NotDeployed('notdeployed', {foo: 'bar'}).getCurrentProps() === null
     )
   })
   it('can get current state of a prop-less component', async () => {
