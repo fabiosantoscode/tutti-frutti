@@ -12,4 +12,9 @@ describe('load-json', () => {
     assert.equal(fd.fn, 'x => x + \'!\'')
     assert.equal(fd.fileName, '/foo')
   })
+  it('loads other objects', () => {
+    assert.equal(loadJSON('foo'), 'foo')
+    assert.deepEqual(loadJSON({foo: 'bar'}), {foo: 'bar'})
+    assert.equal(loadJSON(123), 123)
+  })
 })

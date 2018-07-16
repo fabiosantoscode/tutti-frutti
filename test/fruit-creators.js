@@ -73,6 +73,14 @@ describe('fruit creators: Stateless(...)', () => {
 
     assert.equal(subject.foo, 'thenned-test-foo')
   })
+  it('can load postDeployProps from JSON', () => {
+    const subject = FooProducer('subject', { foo: null })
+
+    subject.loadJSONPostDeployProps({ foo: 'json-foo', bar: 'not-found' })
+
+    assert.equal(subject.foo, 'json-foo')
+    assert.equal(subject.bar, undefined)
+  })
   it('calls onDeploy functions on deploy', async () => {
     const subject = Subject('subject', { foo: 'bar' })
 
