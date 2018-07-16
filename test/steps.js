@@ -3,8 +3,16 @@
 let assert = require('assert')
 assert = assert.strict || assert
 const steps = require('../lib/steps')
+const FunctionDescription = require('../lib/function-description')
+const {Stateless} = require('../lib/fruit-creators')
 
 describe('steps', () => {
+  const WithCode = Stateless({
+    props: ['code'],
+    getCurrentProps () {
+      return {code: null}
+    }
+  })
   it('calculates deletion', () => {
     assert.deepEqual(
       steps(
@@ -17,13 +25,14 @@ describe('steps', () => {
     )
   })
   it('calculates addition', () => {
+    const lambda1 = WithCode('lambda1', {code: 'hello world'})
     assert.deepEqual(
       steps(
         {},
-        {lambda1: {code: 'hello world'}}
+        {lambda1}
       ),
       [
-        {type: 'add', name: 'lambda1', config: {code: 'hello world'}}
+        {type: 'add', name: 'lambda1', config: lambda1}
       ]
     )
   })
@@ -36,6 +45,42 @@ describe('steps', () => {
       [
         { type: 'delete', name: 'lambda1' },
         { type: 'add', name: 'lambda1', config: {code: 'he world'} }
+      ]
+    )
+  })
+  it('works with multiple keys in different orders', () => {
+    assert.deepEqual(
+      steps(
+        {lambda1: {code: 'hey'}, lambda2: {code: 'hi'}},
+        {lambda2: {code: 'hi'}, lambda1: {code: 'hey'}}
+      ),
+      []
+    )
+  })
+  it('detects changes in FunctionDescription', () => {
+    const funcDesc = 'function fakeCode() {}'
+    const funcDesc2 = new FunctionDescription(() => null, {fileName: '/foo'})
+
+    funcDesc2.compiled = funcDesc
+
+    assert.deepEqual(
+      steps(
+        {lambda1: {code: funcDesc}},
+        {lambda1: {code: funcDesc2}}
+      ),
+      []
+    )
+
+    funcDesc2.compiled = 'function anotherFakeCode() {}'
+
+    assert.deepEqual(
+      steps(
+        {lambda1: {code: funcDesc}},
+        {lambda1: {code: funcDesc2}}
+      ),
+      [
+        {type: 'delete', name: 'lambda1'},
+        {type: 'add', name: 'lambda1', config: {code: funcDesc2}}
       ]
     )
   })
