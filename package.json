@@ -30,7 +30,8 @@
   },
   "dependencies": {
     "lodash": "^4.17.10",
-    "pirates": "^4.0.0"
+    "pirates": "^4.0.0",
+    "webpack": "4.6.0"
   },
   "standard": {
     "globals": [
