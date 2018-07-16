@@ -30,5 +30,6 @@ describe('compile-function', () => {
     const exports = evalNode(compiled)
 
     assert.equal(exports(), 'hello packagedFunction! url is http://example.com/url')
+    assert.equal(functionDesc.compiled, compiled)
   })
 })
