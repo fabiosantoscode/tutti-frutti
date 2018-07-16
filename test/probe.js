@@ -11,17 +11,13 @@ describe('probe', () => {
     const fileName = path.join(__dirname, 'examples/describe-calls.js')
     const probed = probe(fileName)
 
-    const BasicPieceOfInfrastructure = probed.basic.class
-    const describedFunction = probed.basic.config.code.fn
+    const BasicPieceOfInfrastructure = probed.basic.fruitClass
+    const describedFunction = probed.basic.code.fn
 
     assert.deepEqual(probed, {
-      basic: {
-        name: 'basic',
-        class: BasicPieceOfInfrastructure,
-        config: {
-          code: new FunctionDescription(describedFunction, { fileName })
-        }
-      }
+      basic: BasicPieceOfInfrastructure('basic', {
+        code: new FunctionDescription(describedFunction, {fileName})
+      })
     })
   })
   it('errors when two equal describe calls are found', () => {
