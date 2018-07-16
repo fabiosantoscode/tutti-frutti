@@ -84,4 +84,24 @@ describe('steps', () => {
       ]
     )
   })
+  it('detects dependencies between fruits and sorts them accordingly', () => {
+    const dependency = Stateless({ postDeployProps: ['pdp'], getCurrentProps () {} })('dependency', {})
+    const foo = WithCode('foo', {code: dependency.postDeployProp('pdp')})
+
+    assert.deepEqual(
+      steps({
+        foo: {code: 'fake-code'},
+        dependency: { pdp: 'pdp-before' }
+      }, {
+        foo,
+        dependency
+      }),
+      [
+        {type: 'delete', name: 'dependency'},
+        {type: 'add', name: 'dependency', config: dependency},
+        {type: 'delete', name: 'foo'},
+        {type: 'add', name: 'foo', config: foo}
+      ]
+    )
+  })
 })
