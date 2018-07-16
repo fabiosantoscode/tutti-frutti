@@ -15,6 +15,11 @@ describe('fruit creators: Stateless(...)', () => {
   const Subject = Stateless({
     props: ['foo'],
     postDeployProps: ['bar'],
+    getCurrentProps () {
+      return {
+        foo: 'current-foo'
+      }
+    },
     async deploy () {
       return {
         bar: 'baz'
@@ -34,6 +39,14 @@ describe('fruit creators: Stateless(...)', () => {
       FooProducer('fooProd', {}).postDeployProp('bar')
     }, /Unknown postDeployProp: "bar"/)
   })
+  it('ensures fruit classes have getCurrentProps', () => {
+    try {
+      Stateless({ props: ['prop'] })
+      assert(false)
+    } catch (e) {
+      assert.equal(e.message, 'Missing getCurrentProps function in a fruit with props')
+    }
+  })
   it('validates return from deploy()', async () => {
     const FruitCreator = Stateless({
       postDeployProps: ['neverReturned'],
@@ -50,6 +63,37 @@ describe('fruit creators: Stateless(...)', () => {
     } catch (e) {
       assert.equal(e.message, 'Missing props in return from deploy(): ["neverReturned"]')
     }
+  })
+  it('validates return from getCurrentProps()', async () => {
+    const FruitCreator = Stateless({
+      props: ['mustHave'],
+      getCurrentProps () {
+        return {}
+      }
+    })
+    const subject = FruitCreator('subject', { mustHave: 'foo' })
+
+    try {
+      await subject.getCurrentProps()
+      assert(false)
+    } catch (e) {
+      assert.equal(e.message, 'getCurrentProps return is missing props: ["mustHave"]')
+    }
+  })
+  it('can get current state', async () => {
+    const correctSubject = Subject('correct', { foo: 'bar' })
+
+    assert.deepEqual(
+      await correctSubject.getCurrentProps(),
+      { foo: 'current-foo' }
+    )
+  })
+  it('can get current state of a prop-less component', async () => {
+    const PropLess = Stateless({ props: [] })
+    assert.deepEqual(
+      await PropLess('propless', {}).getCurrentProps(),
+      {}
+    )
   })
   it('adds props to object', () => {
     const subject = Subject('subject', { foo: 'bar' })

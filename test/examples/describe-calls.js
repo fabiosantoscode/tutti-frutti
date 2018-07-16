@@ -5,6 +5,12 @@ const {Stateless} = require('../../lib')
 const BasicPieceOfInfrastructure = Stateless({
   props: ['code'],
   postDeployProps: ['url'],
+  getCurrentProps () {
+    // go to platform API...
+    return {
+      code: '() => null'
+    }
+  },
   async deploy () {
     return {
       url: 'http://example.com/url'
