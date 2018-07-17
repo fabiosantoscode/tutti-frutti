@@ -27,6 +27,18 @@ describe('steps', () => {
     )
   })
   it('calculates addition', () => {
+    const lambda1 = {code: 'hello world'}
+    assert.deepEqual(
+      steps(
+        {},
+        {lambda1}
+      ),
+      [
+        {type: 'add', name: 'lambda1', config: lambda1}
+      ]
+    )
+  })
+  it('calculates addition with fruits', () => {
     const lambda1 = WithCode('lambda1', {code: 'hello world'})
     assert.deepEqual(
       steps(
