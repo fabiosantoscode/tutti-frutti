@@ -32,6 +32,17 @@ describe('fruit creators: Stateless(...)', () => {
       }
     }
   })
+  describe('fruitClass', () => {
+    it('is assigned to fruit instances', () => {
+      assert.equal(FooProducer('fooProd', {}).fruitClass, FooProducer)
+    })
+    it('Have props, postDeployProps, getCurrentlyDeployed and deploy assigned to them', () => {
+      assert.deepEqual(Subject.props, ['foo'])
+      assert.deepEqual(Subject.postDeployProps, ['bar'])
+      assert.equal(typeof Subject.getCurrentlyDeployed, 'function')
+      assert.equal(typeof Subject.deploy, 'function')
+    })
+  })
   it('validates config', () => {
     assert.throws(() => {
       Subject('test', { })
