@@ -17,7 +17,7 @@ function evalNode (code) {
 }
 
 describe('compile-function', () => {
-  it('can compile itself with webpack', async () => {
+  it('can compile a function with webpack', async () => {
     const fileName = path.join(__dirname, 'examples/describe-calls.js')
 
     const probed = probe(fileName)
