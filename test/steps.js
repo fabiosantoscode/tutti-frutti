@@ -9,9 +9,10 @@ const {Stateless} = require('../lib/fruit-creators')
 describe('steps', () => {
   const WithCode = Stateless({
     props: ['code'],
-    getCurrentProps () {
+    getCurrentlyDeployed () {
       return {code: null}
-    }
+    },
+    deploy () { }
   })
   it('calculates deletion', () => {
     assert.deepEqual(
@@ -85,7 +86,7 @@ describe('steps', () => {
     )
   })
   it('detects dependencies between fruits and sorts them accordingly', () => {
-    const dependency = Stateless({ postDeployProps: ['pdp'], getCurrentProps () {} })('dependency', {})
+    const dependency = Stateless({ postDeployProps: ['pdp'], getCurrentlyDeployed () {}, deploy () {} })('dependency', {})
     const foo = WithCode('foo', {code: dependency.postDeployProp('pdp')})
 
     assert.deepEqual(

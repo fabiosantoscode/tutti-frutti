@@ -2,7 +2,10 @@
 
 const {Stateless} = require('../../lib')
 
-const BasicPieceOfInfrastructure = Stateless()
+const BasicPieceOfInfrastructure = Stateless({
+  deploy () {},
+  getCurrentlyDeployed () {}
+})
 
 describe('basic', BasicPieceOfInfrastructure, {})
 

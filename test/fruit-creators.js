@@ -6,7 +6,7 @@ const {Stateless} = require('../lib/fruit-creators')
 describe('fruit creators: Stateless(...)', () => {
   const FooProducer = Stateless({
     postDeployProps: ['foo'],
-    getCurrentProps () {
+    getCurrentlyDeployed () {
       return {
         foo: 'current-foo'
       }
@@ -20,7 +20,7 @@ describe('fruit creators: Stateless(...)', () => {
   const Subject = Stateless({
     props: ['foo'],
     postDeployProps: ['bar'],
-    getCurrentProps () {
+    getCurrentlyDeployed () {
       return {
         foo: 'current-foo',
         bar: 'current-bar'
@@ -45,18 +45,29 @@ describe('fruit creators: Stateless(...)', () => {
       FooProducer('fooProd', {}).postDeployProp('bar')
     }, /Unknown postDeployProp: "bar"/)
   })
-  it('ensures fruit classes have getCurrentProps', () => {
+  it('ensures fruit classes have getCurrentlyDeployed', () => {
     try {
       Stateless({ props: ['prop'] })
       assert(false)
     } catch (e) {
-      assert.equal(e.message, 'Missing getCurrentProps function in a fruit with props')
+      assert.equal(e.message, 'Missing getCurrentlyDeployed function')
+    }
+  })
+  it('ensures fruits have deploy function', () => {
+    try {
+      Stateless({
+        props: [],
+        getCurrentlyDeployed () { }
+      })
+      assert(false)
+    } catch (e) {
+      assert.equal(e.message, 'Missing deploy function')
     }
   })
   it('validates return from deploy()', async () => {
     const FruitCreator = Stateless({
       postDeployProps: ['neverReturned'],
-      getCurrentProps: () => null,
+      getCurrentlyDeployed: () => null,
       deploy () {
         return {}
       }
@@ -71,41 +82,53 @@ describe('fruit creators: Stateless(...)', () => {
       assert.equal(e.message, 'Missing props in return from deploy(): ["neverReturned"]')
     }
   })
-  it('validates return from getCurrentProps()', async () => {
+  it('validates missing props from getCurrentlyDeployed()', async () => {
     const FruitCreator = Stateless({
       props: ['mustHave'],
-      getCurrentProps () {
-        return {}
-      }
+      getCurrentlyDeployed () {
+        return { basicCode: { } }
+      },
+      deploy () {}
     })
-    const subject = FruitCreator('subject', { mustHave: 'foo' })
 
     try {
-      await subject.getCurrentProps()
+      await FruitCreator.getCurrentlyDeployed()
       assert(false)
     } catch (e) {
-      assert.equal(e.message, 'getCurrentProps return is missing props: ["mustHave"]')
+      assert.equal(e.message, 'getCurrentlyDeployed return is missing props: ["mustHave"] for fruit "basicCode"')
     }
   })
-  it('can get current state', async () => {
-    const correctSubject = Subject('correct', { foo: 'bar' })
+  it('validates extra props from getCurrentlyDeployed()', async () => {
+    const FruitCreator = Stateless({
+      getCurrentlyDeployed () {
+        return { basicCode: { extraProp: 'foo' } }
+      },
+      deploy () {}
+    })
+
+    try {
+      await FruitCreator.getCurrentlyDeployed()
+      assert(false)
+    } catch (e) {
+      assert.equal(e.message, 'getCurrentlyDeployed return has unknown props: ["extraProp"] for fruit "basicCode"')
+    }
+  })
+  it('returns result of getCurrentlyDeployed', async () => {
+    const FruitCreator = Stateless({
+      props: ['foo'],
+      deploy () {},
+      getCurrentlyDeployed () {
+        return {
+          lambda1: { foo: 'bar' }
+        }
+      }
+    })
 
     assert.deepEqual(
-      await correctSubject.getCurrentProps(),
-      { foo: 'current-foo', bar: 'current-bar' }
-    )
-  })
-  it('understands that null means it\'s not deployed', async () => {
-    const NotDeployed = Stateless({ props: ['foo'], getCurrentProps () { return null } })
-    assert(
-      await NotDeployed('notdeployed', {foo: 'bar'}).getCurrentProps() === null
-    )
-  })
-  it('can get current state of a prop-less component', async () => {
-    const PropLess = Stateless({ props: [] })
-    assert.deepEqual(
-      await PropLess('propless', {}).getCurrentProps(),
-      {}
+      await FruitCreator.getCurrentlyDeployed(),
+      {
+        lambda1: { foo: 'bar' }
+      }
     )
   })
   it('adds props to object', () => {

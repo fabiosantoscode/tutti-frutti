@@ -5,10 +5,12 @@ const {Stateless} = require('../../lib')
 const BasicPieceOfInfrastructure = Stateless({
   props: ['code'],
   postDeployProps: ['url'],
-  getCurrentProps () {
+  getCurrentlyDeployed () {
     // go to platform API...
     return {
-      code: '() => null'
+      basic: {
+        code: describeFunction(packagedFunction)
+      }
     }
   },
   async deploy () {
@@ -18,8 +20,10 @@ const BasicPieceOfInfrastructure = Stateless({
   }
 })
 
+const packagedFunction = (arg1, arg2) => {
+  return 'hello packagedFunction! url is ' + basic.url
+}
+
 const basic = describe('basic', BasicPieceOfInfrastructure, {
-  code: describeFunction((arg1, arg2) => {
-    return 'hello packagedFunction! url is ' + basic.url
-  })
+  code: describeFunction(packagedFunction)
 })
