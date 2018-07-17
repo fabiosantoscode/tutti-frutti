@@ -3,6 +3,7 @@
 let assert = require('assert')
 assert = assert.strict || assert
 const steps = require('../lib/steps')
+const {compareProp} = steps
 const FunctionDescription = require('../lib/function-description')
 const {Stateless} = require('../lib/fruit-creators')
 
@@ -58,44 +59,63 @@ describe('steps', () => {
       []
     )
   })
-  it('detects changes in FunctionDescription', () => {
-    const funcDesc = 'function fakeCode() {}'
-    const funcDesc2 = new FunctionDescription(() => null, {fileName: '/foo'})
+  describe('compareProp', () => {
+    it('detects changes in FunctionDescription', () => {
+      const funcDesc = 'function fakeCode() {}'
+      const funcDesc2 = new FunctionDescription(() => null, {fileName: '/foo'})
 
-    funcDesc2.compiled = funcDesc
+      funcDesc2.compiled = funcDesc
 
-    assert.deepEqual(
-      steps(
-        {lambda1: {code: funcDesc}},
-        {lambda1: {code: funcDesc2}}
-      ),
-      []
-    )
+      assert.equal(compareProp(null)('lambdaCode', funcDesc, funcDesc2), true)
 
-    funcDesc2.compiled = 'function anotherFakeCode() {}'
+      funcDesc2.compiled = 'function anotherFakeCode() {}'
 
-    assert.deepEqual(
-      steps(
-        {lambda1: {code: funcDesc}},
-        {lambda1: {code: funcDesc2}}
-      ),
-      [
-        {type: 'delete', name: 'lambda1'},
-        {type: 'add', name: 'lambda1', config: {code: funcDesc2}}
-      ]
-    )
+      assert.equal(compareProp(null)('lambdaCode', funcDesc, funcDesc2), false)
+    })
+    it('detects changes when both are FunctionDescription', () => {
+      const funcDesc = new FunctionDescription(() => null, {fileName: '/foo'})
+      const funcDesc2 = new FunctionDescription(() => null, {fileName: '/foo'})
+
+      funcDesc.compiled = funcDesc2.compiled = '() => null'
+
+      assert.equal(compareProp(null)('lambdaCode', funcDesc, funcDesc2), true)
+
+      funcDesc2.compiled = '() => 1'
+
+      assert.equal(compareProp(null)('lambdaCode', funcDesc, funcDesc2), false)
+    })
+    it('reads the compareProps field', () => {
+      let fakeReturn = true
+      const CustomCompareFruit = Stateless({
+        props: ['foo'],
+        getCurrentlyDeployed () {},
+        deploy () {},
+        compareProps: {
+          foo (a, b) {
+            return fakeReturn
+          }
+        }
+      })
+
+      const before = { foo: '123' }
+      const after = CustomCompareFruit('after', {
+        foo: '456'
+      })
+
+      assert.equal(compareProp(CustomCompareFruit)('foo', before.foo, after.foo), true)
+    })
   })
   it('detects dependencies between fruits and sorts them accordingly', () => {
-    const dependency = Stateless({ postDeployProps: ['pdp'], getCurrentlyDeployed () {}, deploy () {} })('dependency', {})
+    const dependency = Stateless({ props: ['foo'], postDeployProps: ['pdp'], getCurrentlyDeployed () {}, deploy () {} })('dependency', {foo: 'baz'})
     const foo = WithCode('foo', {code: dependency.postDeployProp('pdp')})
 
     assert.deepEqual(
       steps({
         foo: {code: 'fake-code'},
-        dependency: { pdp: 'pdp-before' }
+        dependency: { pdp: 'pdp-before', foo: 'bar' }
       }, {
-        foo,
-        dependency
+        dependency,
+        foo
       }),
       [
         {type: 'delete', name: 'dependency'},

@@ -56,6 +56,16 @@ describe('fruit creators: Stateless(...)', () => {
       FooProducer('fooProd', {}).postDeployProp('bar')
     }, /Unknown postDeployProp: "bar"/)
   })
+  it('ensures fruit class configs do not have unknown properties', () => {
+    try {
+      Stateless({
+        unknownProperty: null
+      })
+      assert(false)
+    } catch (e) {
+      assert.equal(e.message, 'Unknown fruit class config properties: ["unknownProperty"]')
+    }
+  })
   it('ensures fruit classes have getCurrentlyDeployed', () => {
     try {
       Stateless({ props: ['prop'] })
