@@ -22,7 +22,7 @@ describe('steps', () => {
         {}
       ),
       [
-        {type: 'delete', name: 'lambda1'}
+        {type: 'undeploy', name: 'lambda1'}
       ]
     )
   })
@@ -34,7 +34,7 @@ describe('steps', () => {
         {lambda1}
       ),
       [
-        {type: 'add', name: 'lambda1', config: lambda1}
+        {type: 'deploy', name: 'lambda1', config: lambda1}
       ]
     )
   })
@@ -46,7 +46,7 @@ describe('steps', () => {
         {lambda1}
       ),
       [
-        {type: 'add', name: 'lambda1', config: lambda1}
+        {type: 'deploy', name: 'lambda1', config: lambda1}
       ]
     )
   })
@@ -57,8 +57,8 @@ describe('steps', () => {
         {lambda1: {code: 'he world'}}
       ),
       [
-        { type: 'delete', name: 'lambda1' },
-        { type: 'add', name: 'lambda1', config: {code: 'he world'} }
+        { type: 'undeploy', name: 'lambda1' },
+        { type: 'deploy', name: 'lambda1', config: {code: 'he world'} }
       ]
     )
   })
@@ -130,10 +130,10 @@ describe('steps', () => {
         foo
       }),
       [
-        {type: 'delete', name: 'dependency'},
-        {type: 'add', name: 'dependency', config: dependency},
-        {type: 'delete', name: 'foo'},
-        {type: 'add', name: 'foo', config: foo}
+        {type: 'undeploy', name: 'dependency'},
+        {type: 'deploy', name: 'dependency', config: dependency},
+        {type: 'undeploy', name: 'foo'},
+        {type: 'deploy', name: 'foo', config: foo}
       ]
     )
   })
