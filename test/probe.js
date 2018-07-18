@@ -9,16 +9,18 @@ const FunctionDescription = require('../lib/function-description')
 describe('probe', () => {
   it('finds and reports describe calls in a file', () => {
     const fileName = path.join(__dirname, 'examples/describe-calls.js')
-    const probed = probe(fileName)
+    const [classes, fruits] = probe(fileName)
 
-    const BasicPieceOfInfrastructure = probed.basic.fruitClass
-    const describedFunction = probed.basic.code.fn
+    const BasicPieceOfInfrastructure = fruits.basic.fruitClass
+    const describedFunction = fruits.basic.code.fn
 
-    assert.deepEqual(probed, {
+    assert.deepEqual(fruits, {
       basic: BasicPieceOfInfrastructure('basic', {
         code: new FunctionDescription(describedFunction, {fileName})
       })
     })
+
+    assert.deepEqual(classes, [BasicPieceOfInfrastructure])
   })
   it('errors when two equal describe calls are found', () => {
     const fileName = path.join(__dirname, 'examples/error-two-equal-describe-calls.js')

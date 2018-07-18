@@ -20,7 +20,7 @@ describe('compile-function', () => {
   it('can compile a function with webpack', async () => {
     const fileName = path.join(__dirname, 'examples/describe-calls.js')
 
-    const probed = probe(fileName)
+    const [_, probed] = probe(fileName)
     const functionDesc = probed.basic.code
 
     await probed.basic.deploy()
