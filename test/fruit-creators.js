@@ -32,6 +32,11 @@ describe('fruit creators: Stateless(...)', () => {
       }
     }
   })
+  const Undeployable = Stateless({
+    getCurrentlyDeployed() {},
+    async deploy () { },
+    async undeploy () { }
+  })
   describe('fruitClass', () => {
     it('is assigned to fruit instances', () => {
       assert.equal(FooProducer('fooProd', {}).fruitClass, FooProducer)
@@ -83,6 +88,16 @@ describe('fruit creators: Stateless(...)', () => {
       assert(false)
     } catch (e) {
       assert.equal(e.message, 'Missing deploy function')
+    }
+  })
+  it('ensures fruits have undeploy function when undeploying', async () => {
+    const subject = Subject('subject', { foo: 'bar' })
+
+    try {
+      await subject.undeploy()
+      assert(false)
+    } catch (e) {
+      assert.equal(e.message, 'Cannot undeploy "subject", as its FruitClass doesn\'t have an undeploy function')
     }
   })
   it('validates return from deploy()', async () => {
@@ -205,5 +220,31 @@ describe('fruit creators: Stateless(...)', () => {
       assert.equal(called, true)
       cb()
     })
+  })
+  it('calls onUndeploy() functions when undeployed', async () => {
+    const subject = Undeployable('subject')
+
+    let called = false
+
+    subject.onUndeploy(() => { called = true })
+
+    await subject.undeploy()
+
+    assert.equal(called, true)
+  })
+  it('calls onUndeploy functions after setImmediate when already undeployed', async () => {
+    const subject = Undeployable('subject')
+
+    await subject.undeploy()
+
+    let called = false
+
+    subject.onUndeploy(() => { called = true })
+
+    assert.equal(called, false)
+
+    await new Promise(setImmediate)
+
+    assert.equal(called, true)
   })
 })
