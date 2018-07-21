@@ -47,14 +47,19 @@ describe('fruit creators: Stateless(...)', () => {
       assert.equal(typeof Subject.getCurrentlyDeployed, 'function')
       assert.equal(typeof Subject.deploy, 'function')
     })
+    it('validates props', () => {
+      assert.throws(() => {
+        Stateless({ props: ['deploy'], getCurrentlyDeployed(){}, deploy(){} })
+      }, /Forbidden configuration property "deploy"/)
+    })
   })
   it('validates config', () => {
     assert.throws(() => {
       Subject('test', { })
     }, /Missing props in configuration: \["foo"\]/)
     assert.throws(() => {
-      Subject('test', { foo: 'bar', deploy: 'forbidden' })
-    }, /Forbidden configuration property "deploy"/)
+      Subject('test', { foo: 'bar', bar: 'baz' })
+    }, /Extra props in configuration: \["bar"\]/)
   })
   it('validates postDeployProp() calls', () => {
     assert.throws(() => {
@@ -118,35 +123,26 @@ describe('fruit creators: Stateless(...)', () => {
       assert.equal(e.message, 'Missing props in return from deploy(): ["neverReturned"]')
     }
   })
-  it('validates missing props from getCurrentlyDeployed()', async () => {
-    const FruitCreator = Stateless({
-      props: ['mustHave'],
+  it('converts errors from creating a fruit out of getCurrentlyDeployed() keys', async () => {
+    const FaultyFruitCreator = Stateless({
+      deploy () {},
       getCurrentlyDeployed () {
-        return { basicCode: { } }
-      },
-      deploy () {}
+        return {
+          lambda1: {
+            extraProp: 'foo'
+          }
+        }
+      }
     })
 
     try {
-      await FruitCreator.getCurrentlyDeployed()
+      await FaultyFruitCreator.getCurrentlyDeployed()
       assert(false)
     } catch (e) {
-      assert.equal(e.message, 'getCurrentlyDeployed return is missing props: ["mustHave"] for fruit "basicCode"')
-    }
-  })
-  it('validates extra props from getCurrentlyDeployed()', async () => {
-    const FruitCreator = Stateless({
-      getCurrentlyDeployed () {
-        return { basicCode: { extraProp: 'foo' } }
-      },
-      deploy () {}
-    })
-
-    try {
-      await FruitCreator.getCurrentlyDeployed()
-      assert(false)
-    } catch (e) {
-      assert.equal(e.message, 'getCurrentlyDeployed return has unknown props: ["extraProp"] for fruit "basicCode"')
+      assert.equal(
+        e.message,
+        'Error while converting getCurrentlyDeployed().lambda1: Extra props in configuration: ["extraProp"]'
+      )
     }
   })
   it('returns result of getCurrentlyDeployed', async () => {
@@ -163,7 +159,7 @@ describe('fruit creators: Stateless(...)', () => {
     assert.deepEqual(
       await FruitCreator.getCurrentlyDeployed(),
       {
-        lambda1: { foo: 'bar' }
+        lambda1: FruitCreator('lambda1', { foo: 'bar' })
       }
     )
   })
@@ -190,7 +186,7 @@ describe('fruit creators: Stateless(...)', () => {
     assert.equal(subject.foo, 'thenned-test-foo')
   })
   it('can load postDeployProps from JSON', () => {
-    const subject = FooProducer('subject', { foo: null })
+    const subject = FooProducer('subject')
 
     subject.loadJSONPostDeployProps({ foo: 'json-foo', bar: 'not-found' })
 
