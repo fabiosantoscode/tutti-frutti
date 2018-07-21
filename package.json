@@ -7,8 +7,12 @@
     "node": ">=10.0.0"
   },
   "main": "lib/index.js",
+  "bin": {
+    "tutti-frutti": "bin/tutti-frutti.js"
+  },
   "files": [
-    "lib"
+    "lib",
+    "bin"
   ],
   "directories": {
     "lib": "lib",
@@ -33,7 +37,8 @@
     "lodash": "^4.17.10",
     "pirates": "^4.0.0",
     "user-async-function": "^1.1.0",
-    "webpack": "4.6.0"
+    "webpack": "4.6.0",
+    "yargs": "^12.0.1"
   },
   "standard": {
     "globals": [
