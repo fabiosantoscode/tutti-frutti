@@ -6,11 +6,13 @@ const path = require('path')
 const commands = require('../lib/commands')
 const FunctionDescription = require('../lib/function-description')
 
+const describeExampleFile = path.join(__dirname, 'examples/describe-calls.js')
+
 describe('commands', () => {
   describe('plan', () => {
     it('probes a file and returns what has changed', async () => {
       assert.deepEqual(
-        await commands.plan(path.join(__dirname, 'examples/describe-calls.js')),
+        await commands.plan(describeExampleFile),
         []
       )
     })
@@ -19,7 +21,7 @@ describe('commands', () => {
         lambda1: {
           notCompiledProp: {},
           code: new FunctionDescription(() => null, {
-            fileName: path.join(__dirname, 'examples/describe-calls.js')
+            fileName: describeExampleFile
           })
         }
       }
@@ -42,6 +44,24 @@ describe('commands', () => {
       } catch (e) {
         assert.equal(e.message, 'Fruits already exist: ["existingFruit"]')
       }
+    })
+  })
+  describe('deploy', () => {
+    it('can deploy an infrastructure', async () => {
+      await commands.deploy(describeExampleFile)
+    })
+    it('runs deploy and undeploy', async () => {
+      let deployed = false
+      let undeployed = false
+      await commands._deployWithSteps(
+        [
+          {type: 'undeploy', config: {undeploy () { undeployed = true }}},
+          {type: 'deploy', config: {deploy () { deployed = true }}}
+        ]
+      )
+
+      assert.equal(deployed, true)
+      assert.equal(undeployed, true)
     })
   })
 })

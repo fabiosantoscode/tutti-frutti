@@ -33,7 +33,7 @@ describe('fruit creators: Stateless(...)', () => {
     }
   })
   const Undeployable = Stateless({
-    getCurrentlyDeployed() {},
+    getCurrentlyDeployed () {},
     async deploy () { },
     async undeploy () { }
   })
@@ -49,7 +49,7 @@ describe('fruit creators: Stateless(...)', () => {
     })
     it('validates props', () => {
       assert.throws(() => {
-        Stateless({ props: ['deploy'], getCurrentlyDeployed(){}, deploy(){} })
+        Stateless({ props: ['deploy'], getCurrentlyDeployed () {}, deploy () {} })
       }, /Forbidden configuration property "deploy"/)
     })
   })
