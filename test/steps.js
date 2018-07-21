@@ -22,7 +22,7 @@ describe('steps', () => {
         {}
       ),
       [
-        {type: 'undeploy', name: 'lambda1'}
+        {type: 'undeploy', name: 'lambda1', config: {code: 'hello world'}}
       ]
     )
   })
@@ -57,7 +57,7 @@ describe('steps', () => {
         {lambda1: {code: 'he world'}}
       ),
       [
-        { type: 'undeploy', name: 'lambda1' },
+        { type: 'undeploy', name: 'lambda1', config: {code: 'eh world'} },
         { type: 'deploy', name: 'lambda1', config: {code: 'he world'} }
       ]
     )
@@ -130,9 +130,9 @@ describe('steps', () => {
         foo
       }),
       [
-        {type: 'undeploy', name: 'dependency'},
+        {type: 'undeploy', name: 'dependency', config: {pdp: 'pdp-before', foo: 'bar'}},
         {type: 'deploy', name: 'dependency', config: dependency},
-        {type: 'undeploy', name: 'foo'},
+        {type: 'undeploy', name: 'foo', config: {code: 'fake-code'}},
         {type: 'deploy', name: 'foo', config: foo}
       ]
     )
