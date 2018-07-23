@@ -2,6 +2,7 @@
 'use strict'
 
 const yargs = require('yargs')
+const chalk = require('chalk')
 const {plan, deploy} = require('../lib/commands')
 
 const fileNameArg = yargs => {
@@ -14,16 +15,39 @@ const fileNameArg = yargs => {
 yargs
   .command(
     'plan [fileName]',
+    'see what steps are going to be made',
     fileNameArg,
-    argv => {
-      plan(argv.fileName)
+    async (argv) => {
+      const steps = await plan(argv.fileName)
+      const grayEmoji = emoji =>
+        process.stdout.isTTY
+          ? chalk.gray(emoji)
+          : ''
+      for (const {type, name} of steps) {
+        if (type === 'deploy') {
+          console.log(grayEmoji('⬆ ') + chalk.green('deploy') + ' ' + name)
+        }
+        if (type === 'undeploy') {
+          console.log(grayEmoji('💣 ') + chalk.red('undeploy'), name)
+        }
+      }
     }
   )
+  .argv
+
+yargs
   .command(
     'deploy [fileName]',
+    'run a deployment or update',
     fileNameArg,
-    argv => {
-      deploy(argv.fileName)
+    async (argv) => {
+      try {
+        await deploy(argv.fileName)
+      } catch (e) {
+        console.error(e)
+        process.exit(1)
+      }
     }
   )
+  .argv
 

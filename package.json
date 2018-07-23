@@ -33,6 +33,7 @@
     "standard": "^11.0.1"
   },
   "dependencies": {
+    "chalk": "^2.4.1",
     "dependency-graph": "^0.7.1",
     "lodash": "^4.17.10",
     "pirates": "^4.0.0",
